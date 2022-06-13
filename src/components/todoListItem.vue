@@ -4,33 +4,41 @@
             .input-block
                 input(
                     type ="checkbox"
-                    @change="checkTodo"
+                    @change="checkTodoAsCompleted"
                     :checked="todo.checked"
                 ).input
-            .title {{todo.name}}    
+            .title {{todo.name}}
+        .button
+            router-link(
+                tag="button"
+                :to="`/view/${todo.name}`"
+            ).view -> 
         .button
             button(
                 type="button"
-                @click="removeTodo"
+                @click="removeExistedTodo"
             ).remove x
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+
 export default {
   props: {
       todo: Object
   },
   methods: {
-    removeTodo() {
-        this.$emit('removeTodo', this.todo.id);
+    ...mapMutations(['removeTodo', 'checkTodo']),
+    removeExistedTodo() {
+        this.removeTodo(this.todo.id);
     },
-    checkTodo(e) {
+    checkTodoAsCompleted(e) {
         const todoItem = {
             ...this.todo,
             checked: e.target.checked
         }
 
-        this.$emit('checkTodo', todoItem);
+        this.checkTodo(todoItem);
     }
   }
 }
@@ -46,6 +54,15 @@ export default {
         .remove {
             visibility: visible; 
         }
+
+        .view {
+            visibility: visible;
+        }
+    }
+
+    .view {
+        visibility: hidden;
+        cursor: pointer;
     }
 
 
